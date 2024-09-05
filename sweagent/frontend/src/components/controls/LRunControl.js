@@ -285,9 +285,9 @@ function LRunControl({
         <Tab eventKey="env" title="Environment">
           <div className="p-3">
             <p>
-              These settings set up the environment in which SWE-agent operates.
+              These settings set up the environment in which SWE-crafter operates.
               It's a good idea to explicitly specify all relevant setup commands
-              here (though SWE-agent will try to figure them out if they
+              here (though SWE-crafter will try to figure them out if they
               aren't).
             </p>
             <div className="input-group mb-3">
@@ -355,7 +355,7 @@ function LRunControl({
         <div className="extraButtons">
           <div className="btn-group" role="group" aria-label="Basic example">
             <Link
-              to="https://github.com/princeton-nlp/SWE-agent"
+              to="https://github.com/umans-tech/SWE-crafter"
               target="_blank"
               rel="noopener noreferrer"
             >
