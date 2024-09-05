@@ -214,3 +214,81 @@ submit() {
     cat model.patch
     echo "||SUBMISSION>>"
 }
+
+
+
+
+# @yaml
+# signature: test [<name_test>]
+# docstring: runs the tests for the current repo based on the top-level directory name. If a test name is provided, it runs that specific test; otherwise, it runs all tests.
+# arguments:
+#   name_test:
+#     type: string
+#     description: the name of the specific test to run (if not provided, runs all tests)
+#     required: false
+test() {
+    local name_test="$1"
+    
+    local original_dir=$(pwd)
+
+    # Ensure we return to the original directory, even if the script exits unexpectedly
+    trap 'cd "$original_dir"' EXIT
+
+    # Get the top-level directory name in the format scikit-learn__scikit-learn
+    # local repo_name=$(realpath --relative-to=$ROOT/.. $PWD | cut -d'/' -f1)
+    local repo_name=$(basename "$ROOT")
+
+    if [ -d "$ROOT/$repo_name/" ]; then
+        repo_root="$ROOT/$repo_name/"
+    else
+        repo_root="$ROOT/"
+    fi
+
+    # Define the default pytest command
+    local pytest_command="pytest --maxfail=5 --disable-warnings --tb=short -q --no-header -p no:progress"
+    
+    declare -A MAP_REPO_TO_TEST_FRAMEWORK=(
+        ["astropy__astropy"]="$pytest_command"
+        ["django__django"]="./tests/runtests.py --verbosity 2"
+        ["marshmallow-code__marshmallow"]="$pytest_command"
+        ["matplotlib__matplotlib"]="$pytest_command"
+        ["mwaskom__seaborn"]="$pytest_command"
+        ["pallets__flask"]="$pytest_command"
+        ["psf__requests"]="$pytest_command"
+        ["pvlib__pvlib-python"]="$pytest_command"
+        ["pydata__xarray"]="$pytest_command"
+        ["pydicom__pydicom"]="$pytest_command"
+        ["pylint-dev__astroid"]="$pytest_command"
+        ["pylint-dev__pylint"]="$pytest_command"
+        ["pytest-dev__pytest"]="$pytest_command  -rf"
+        ["pyvista__pyvista"]="$pytest_command"
+        ["scikit-learn__scikit-learn"]="$pytest_command"
+        ["sphinx-doc__sphinx"]="tox -q -epy39 -v --"
+        ["sqlfluff__sqlfluff"]="$pytest_command"
+        ["sympy__sympy"]="bin/test -C --verbose | grep -E 'FAILED|PASSED'"
+    )
+
+    if [[ -v MAP_REPO_TO_TEST_FRAMEWORK["$repo_name"] ]]; then
+        local test_command="${MAP_REPO_TO_TEST_FRAMEWORK[$repo_name]}"
+        # Change to the root subfolder
+        if [ -d "$repo_root" ]; then
+            cd "$repo_root" || {
+                echo "Failed to change directory to the root subfolder."
+                return 1
+            }
+        else
+            echo "Root subfolder does not exist: $repo_root"
+            return 1
+        fi
+    else
+        local test_command="$pytest_command"
+    fi
+
+
+    # Run the tests
+    if [ -n "$name_test" ]; then
+        $test_command "$name_test"
+    else
+        $test_command
+    fi
+}
