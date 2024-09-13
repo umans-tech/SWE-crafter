@@ -9,8 +9,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Initialize git
-RUN git config --global user.email "sweagent@pnlp.org"
-RUN git config --global user.name "sweagent"
+RUN git config --global user.email "swecrafter@umans.tech"
+RUN git config --global user.name "swecrafter"
 
 # Environment variables
 ENV ROOT='/dev/'

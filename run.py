@@ -61,11 +61,11 @@ python run.py --model_name "gpt4" --data_path "https://github.com/pvlib/pvlib-py
 python run.py --model_name "gpt4" --data_path "/path/to/my_issue.md" --repo_path "/path/to/my/local/repo" --environment_setup "/path/to/setup.sh" --config_file "config/default_from_url.yaml" --apply_patch_locally
 ```
 
-**For more information**: https://princeton-nlp.github.io/SWE-agent/usage/cl_tutorial/
+**For more information**: https://github.com/umans-tech/swe-crafter/usage/cl_tutorial/
 """
 
 
-logger = get_logger("swe-agent-run")
+logger = get_logger("swe-crafter-run")
 logging.getLogger("simple_parsing").setLevel(logging.WARNING)
 
 
@@ -195,7 +195,7 @@ class SaveApplyPatchHook(MainHook):
     def _print_patch_message(patch_output_file: Path):
         console = rich.console.Console()
         msg = [
-            "SWE-agent has produced a patch that it believes will solve the issue you submitted!",
+            "SWE-crafter has produced a patch that it believes will solve the issue you submitted!",
             "Use the code snippet below to inspect or apply it!",
         ]
         panel = rich.panel.Panel.fit(
@@ -476,7 +476,7 @@ def get_args(args=None) -> ScriptArguments:
     defaults = ScriptArguments(
         suffix="",
         environment=EnvironmentArguments(
-            image_name="sweagent/swe-agent:latest",
+            image_name="umans/swe-crafter:latest",
             data_path="princeton-nlp/SWE-bench_Lite",
             split="dev",
             verbose=True,
@@ -492,7 +492,7 @@ def get_args(args=None) -> ScriptArguments:
                 temperature=0.0,
                 top_p=0.95,
             ),
-            config_file=CONFIG_DIR / "default.yaml",
+            config_file=CONFIG_DIR / "test-first_from_url.yaml",
         ),
         actions=ActionsArguments(open_pr=False, skip_if_commits_reference_issue=True),
     )
